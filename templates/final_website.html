@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootswatch/4.1.0/superhero/bootstrap.min.css" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- first three banners -->
+    <div>
+        <img src={{url_for( 'static',filename="photos/baner.png" )}} class="img-fluid" alt="Responsive image">
+        <img src={{url_for( 'static',filename="photos/p1.png" )}} class="img-fluid" alt="Responsive image">
+        <img src={{url_for( 'static',filename="photos/p2.png" )}} class="img-fluid" alt="Responsive image">
+    </div>
+    <!-- search part -->
+    <!-- <div style="background-color: #FBD879" class="container"> -->
+    <div style="background-color: #FBD879">
+        <br>
+        <br>
+        <br>
+        <div class="form-row">
+                <div class="col-4">
+                </div>
+            <div id="basic_search" class="form-group col-md-4">
+                <input class="form-control" type="text" id="ti">
+                <button onclick="hi()" style="background-color: #1E59D4" type="submit" class="btn btn-info"> search Medicine</button>
+            </div>
+        </div>
+        <div class="form-check form-check-inline">
+            <div class="form-group col-md-4">
+                <input class="form-control" type="text" id="t2" placeholder="user mail">
+            </div>
+        <!-- </div>
+        <div class="form-row"> -->
+            <div class="form-group col-md-4">
+                <input class="form-control" type="text" id="t3" placeholder="user name">
+            </div>
+        <!-- </div> -->
+        <div class="form-group col-md-4">
+            <input class="form-control" type="text" id="t4" placeholder="medicine">
+            <button onclick="sendForMail()" style="background-color: #1E59D4" type="submit" class="btn btn-info"> update state</button>
+        </div>
+    </div>
+    <!-- giveaway banner -->
+    <div>
+        <img src={{url_for( 'static',filename="photos/p3.png" )}} class="img-fluid" alt="Responsive image">
+    </div>
+    <!-- giveaway part -->
+    <div style="background-color: #4a4a4a">
+        <br>
+        <br>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <input type="personName" class="form-control" id="inputpersonName" placeholder="what's your name?">
+            </div>
+            <div class="form-group col-md-4">
+                <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+            </div>
+            <div class="form-group col-md-4">
+                <input type="text" class="form-control" id="inputCity" placeholder="City">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <input type="text" class="form-control" id="inputMedName" placeholder="Medicine Name">
+            </div>
+            <div class="form-group col-md-4">
+                <input type="date" class="form-control" id="inputExpirationDate" placeholder="expiration date">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="number" class="form-control" id="Amount" placeholder="Amount">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck">
+                <label class="form-check-label" for="gridCheck">
+                    is Closed?
+                </label>
+            </div>
+        </div>
+        <button onclick="sendToDB()" style="background-color: #1E59D4" class="btn btn-info">Insert To Data Base</button>
+    </div>
+    <script>
+          function sendToDB() {
+            var inputpersonName = document.getElementById("inputpersonName").value;
+            var inputEmail = document.getElementById("inputEmail").value;
+            var inputCity = document.getElementById("inputCity").value;
+            var inputMedName = document.getElementById("inputMedName").value;
+            var inputExpirationDate = document.getElementById("inputExpirationDate").value;
+            var inputAmount = document.getElementById("Amount").value;
+            var isChecked = $("#gridCheck").prop("checked");
+            $.post("/add", { med_name: inputMedName, date: inputExpirationDate, amount: inputAmount, is_closed: isChecked, city: inputCity, owner_mail: inputEmail, owner_name: inputpersonName })
+                .done(function (data) {
+                    alert("Data Loaded: " + data);
+                });
+        }
+
+        const inputTag = document.getElementById('ti');
+        const inputTag1 = document.getElementById('t2')
+        const inputTag2 = document.getElementById('t3')
+        const inputTag3 = document.getElementById('t4')
+        function convertToTable(data) {
+            var table = document.createElement("table");
+            table.className = "table table-dark";
+            var sDev= document.getElementById("basic_search");
+            sDev.appendChild(table);
+            // crateing the header of the file
+            var tr = table.insertRow(0);
+            var col = ["id", "medicine name", "expiration date", "amount", "is closed", "city", "owner name"]
+            for (var i = 0; i < col.length; i++) {
+                var th = document.createElement("th");      // TABLE HEADER.
+                th.innerHTML = col[i];
+                tr.appendChild(th);
+            }
+
+            for (var i = 0; i < Object.keys(data).length; i++) {
+                var ir = table.insertRow(i + 1);
+                var varTemp = data[Object.keys(data)[i]];
+                for (var j = 0; j < col.length; j++) {
+                    var tabCell = ir.insertCell(j);
+                    tabCell.innerHTML = varTemp[col[j]];
+                }
+            }
+            if (!(Object.keys(data).length === 0)){
+                var input_for_vaild = document.createElement("Div");
+                input_for_vaild.class = "form-row";
+                // name
+                var name_for_vaild =  document.createElement("Div");
+                name_for_vaild.class = "form-group col-md-6";
+                input_for_vaild.appendChild(name_for_vaild);
+                // name label
+                label_name =document.createElement("LABEL");
+                label_name.for = "inputpersonName";
+                label_name.innerHTML = "insert your name";
+                name_for_vaild.appendChild(label_name);
+                // name input
+                input_name =document.createElement("INPUT");
+                input_name.class  = "form-control";
+                input_name.type = "text";
+                input_name.id = "i1"
+                name_for_vaild.appendChild(input_name);
+
+                // mail
+                var mail_for_vaild =  document.createElement("Div");
+                mail_for_vaild.class = "form-group col-md-6";
+                input_for_vaild.appendChild(mail_for_vaild);
+                // mail label
+                label_mail =document.createElement("LABEL");
+                label_mail.for = "inputpersonName";
+                label_mail.innerHTML = "insert your mail";
+                mail_for_vaild.appendChild(label_mail);
+                // mail input
+                input_mail =document.createElement("INPUT");
+                input_mail.class  = "form-control";
+                input_mail.type = "text";
+                input_mail.id = "i2"
+                mail_for_vaild.appendChild(input_mail);
+
+                // uid
+                var uid_for_vaild =  document.createElement("Div");
+                uid_for_vaild.class = "form-group col-md-6";
+                input_for_vaild.appendChild(uid_for_vaild);
+                // uid label
+                label_uid =document.createElement("LABEL");
+                label_uid.for = "inputpersonName";
+                label_uid.innerHTML = "insert the ID of the Medicine";
+                uid_for_vaild.appendChild(label_uid);
+                // uid input
+                input_uid =document.createElement("INPUT");
+                input_uid.class  = "form-control";
+                input_uid.type = "text";
+                input_uid.id = "i3";
+                uid_for_vaild.appendChild(input_uid);
+                var insert_btn =document.createElement("BUTTON");
+                insert_btn.onclick = "sendForMailVaild()";
+                insert_btn.style = "background-color: #1E59D4";
+                insert_btn.type = "submit";
+                insert_btn.class = "btn btn-info";
+                insert_btn.innerHTML = "check for a match!";
+                uid_for_vaild.appendChild(insert_btn);
+
+                sDev.appendChild(input_for_vaild);
+            }
+        }
+
+
+        function hi() {
+            fetch(`/check=${inputTag.value}`).then((response) => {
+                return response.json()
+            }).then(data => {
+                convertToTable(data);
+            })
+
+
+        }
+
+        function sendForMailVaild() {
+            const inputTag01 = document.getElementById('i1');
+            const inputTag02 = document.getElementById('i2');
+            const inputTag03 = document.getElementById('i3');
+            var nameVal = inputTag1.value;
+            var mailVal = inputTag2.value;
+            var idVal = inputTag3.value;
+            $.post("/select_item", { mail: mailVal, name: nameVal, uid: idVal });
+            inputTag01.innerHTML = "";
+            inputTag02.innerHTML = "";
+            inputTag03.innerHTML = "";
+        }
+
+        function sendForMail() {
+            const inputTag1 = document.getElementById('t2');
+            const inputTag2 = document.getElementById('t3');
+            const inputTag3 = document.getElementById('t4');
+            var mailVal = inputTag1.value;
+            var nameVal = inputTag2.value;
+            var medVal = inputTag3.value;
+            $.post("/add_waiting", { mail: mailVal, name: nameVal, med: medVal });
+            inputTag1.innerHTML = "";
+            inputTag2.innerHTML = "";
+            inputTag3.innerHTML = "";
+        }
+    </script>
+</body>
+
+</html>

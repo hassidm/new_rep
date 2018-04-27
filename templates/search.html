@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
+<hi>Search Medication</hi>
+
+<input type="text" id="ti">
+<button onclick="hi()"> search</button> <br><br><br>
+<hi>user mail</hi>
+<input type="text" id="t2">
+<hi>user name</hi>
+<input type="text" id="t3">
+<hi>Medication wanted</hi>
+<input type="text" id="t4">
+<button onclick="sendForMail()"> update state</button><br><br>
+<script>
+const inputTag = document.getElementById('ti');
+            const inputTag1 = document.getElementById('t2')
+            const inputTag2 = document.getElementById('t3')
+            const inputTag3 = document.getElementById('t4')
+    function convertToTable(data){
+//		if (data != null) {
+//			var sign = document.createElement("button");
+//			sign.innerHTML="sign";
+//			sign.className = "button";
+//			document.body.appendChild(sign);
+//		}
+        var table = document.createElement("table");
+        table.className = "table table-dark";
+        document.body.appendChild(table);
+        // crateing the header of the file
+        var tr = table.insertRow(0);
+        var col = ["id", "medicine name", "expiration date", "amount", "is closed", "city", "owner name", "picture"]
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        for (var i = 0; i < Object.keys(data).length; i++) {
+            var ir = table.insertRow(i+1);
+            var varTemp = data[Object.keys(data)[i]];
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = ir.insertCell(j);
+                tabCell.innerHTML = varTemp[col[j]];
+            }
+        }
+
+}
+
+
+function hi() {
+  fetch(`/check=${inputTag.value}` ).then((response) => {return response.json()
+  }).then(data => {
+  	convertToTable(data);
+  })
+
+
+}
+
+       function sendForMail(){
+                const inputTag1 = document.getElementById('t2');
+                const inputTag2 = document.getElementById('t3');
+                const inputTag3 = document.getElementById('t4');
+                var mailVal = inputTag1.value;
+                var nameVal = inputTag2.value;
+                var medVal = inputTag3.value;
+				$.post( "/add_waiting", {mail:mailVal, name:nameVal, med:medVal});
+				console.log({mail:mailVal, name:nameVal, med:medVal});
+                inputTag1.innerHTML = "";
+                inputTag2.innerHTML = "";
+                inputTag3.innerHTML = "";
+            }
+
+
+</script>
+
+
+</body>
+</html>
+
