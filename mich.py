@@ -44,16 +44,16 @@ def send_mail(address_mail, name, subject_text, body_text):
     img_url = "https://media.giphy.com/media/UJg0aZmim0Yc8/giphy.gif"
     header = "שלום " + name
     msgText = MIMEText(
-        """<html><head></head><body>
+        """<html><head></head><body style='font-family="Alef Hebrew";'>
         <div align="right">
-        <img src=%s />
         <br>
         <h1>%s</h1>
         <br>
         %s
-        <br>
+        <br><br><br>
+        <img src="https://i.imgur.com/e2MDDEt.png"/>
         </div>
-        </body></html>""" %(img_url, header, body_text), 'html')
+        </body></html>""" %(header, body_text), 'html')
     final_msg.attach(msgText)
 
     # Gmail Login
