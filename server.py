@@ -137,7 +137,6 @@ def add():
     med_name = mich.best_word(all_meds, med_name)
     if med_name is None:
         return jsonify(json.dumps({'state': 1}))
-    print(data["is_closed"])
     if data["is_closed"] == "true":
         closed = "YES"
     else:
