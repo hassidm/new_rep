@@ -92,21 +92,22 @@ def create_msg_giver(mail_getter, name_getter):
 
 @app.route("/select_item", methods = ["POST"])
 def select_item():
-    print("here")
 
      #in args i need: uid of giver, mail_getter, name_getter
     data = request.form
     uid_tuple = (data["uid"], )
-    c.execute('''select mail, name
+
+    c.execute('''select owner_mail, owner_name
                  from meds
-                 where uid = ? collate nocase''', uid_tuple)
-    mail_giver, name_giver = c.fetchall()
+                 where uid = ?''', uid_tuple)
+    giver_details = c.fetchall()[0]
+    mail_giver, name_giver = giver_details
     msg_to_getter = create_msg_getter(mail_giver, name_giver)
     mich.send_mail(data["mail"], data["name"],
                    msg_to_getter[0], msg_to_getter[1])
 
-    msg_to_giver = create_msg_giver(request.args["mail"], request.args["name"])
-    mich.send_mail(mail_giver, name_giver, msg_to_getter[0], msg_to_getter[1])
+    msg_to_giver = create_msg_giver(data["mail"], data["name"])
+    mich.send_mail(mail_giver, name_giver, msg_to_giver[0], msg_to_giver[1])
 
     c.execute('''select med_name
                      from meds
@@ -120,13 +121,12 @@ def select_item():
 
     # delete the request
 
-    waiting_details = (request.args["mail_getter"], medication)
+    waiting_details = (data["mail"], medication)
     c.execute('''delete
                 from waiting
                 where mail = ? and med_name = ? collate nocase''', waiting_details)
     conn.commit()
-
-    return
+    return jsonify(json.dumps({'state': 0}))
 
 
 @app.route("/add", methods=['POST'])
